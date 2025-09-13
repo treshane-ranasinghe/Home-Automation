@@ -18,6 +18,8 @@
         --primary-dark: #1d4ed8;
         --secondary: #3b82f6;
         --accent: #22d3ee;
+        --gradient-start: #2563eb;
+        --gradient-end: #22d3ee;
         --background: #ffffff;
         --foreground: #1f2937;
         --muted: #6b7280;
@@ -28,6 +30,11 @@
         --input: #e5e7eb;
         --ring: #3b82f6;
         --radius: 0.5rem;
+        --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+          0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
       }
 
       .dark {
@@ -39,6 +46,11 @@
         --card-foreground: #f1f5f9;
         --border: #334155;
         --input: #334155;
+        --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2),
+          0 2px 4px -1px rgba(0, 0, 0, 0.12);
+        --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.2),
+          0 10px 10px -5px rgba(0, 0, 0, 0.15);
+        --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
       }
 
       * {
@@ -53,6 +65,7 @@
         color: var(--foreground);
         line-height: 1.6;
         transition: background-color 0.3s, color 0.3s;
+        overflow-x: hidden;
       }
 
       .container {
@@ -61,13 +74,25 @@
         padding: 0 1.5rem;
       }
 
+      /* Header with glassmorphism effect */
       header {
         padding: 1rem 0;
-        background-color: var(--background);
+        background-color: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
         border-bottom: 1px solid var(--border);
         position: sticky;
         top: 0;
         z-index: 100;
+        transition: all 0.3s ease;
+      }
+
+      .dark header {
+        background-color: rgba(15, 23, 42, 0.8);
+      }
+
+      header.scrolled {
+        padding: 0.5rem 0;
+        box-shadow: var(--shadow);
       }
 
       nav {
@@ -83,6 +108,11 @@
         display: flex;
         align-items: center;
         gap: 0.5rem;
+        transition: transform 0.3s ease;
+      }
+
+      .logo:hover {
+        transform: scale(1.05);
       }
 
       .nav-links {
@@ -94,11 +124,32 @@
         text-decoration: none;
         color: var(--foreground);
         font-weight: 500;
-        transition: color 0.3s;
+        transition: all 0.3s ease;
+        position: relative;
+        padding: 0.5rem 0;
+      }
+
+      .nav-links a::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: linear-gradient(
+          90deg,
+          var(--gradient-start),
+          var(--gradient-end)
+        );
+        transition: width 0.3s ease;
       }
 
       .nav-links a:hover {
         color: var(--primary);
+      }
+
+      .nav-links a:hover::after {
+        width: 100%;
       }
 
       .nav-actions {
@@ -113,6 +164,22 @@
         color: var(--foreground);
         cursor: pointer;
         font-size: 1.2rem;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+      }
+
+      .theme-toggle:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+        transform: rotate(30deg);
+      }
+
+      .dark .theme-toggle:hover {
+        background-color: rgba(255, 255, 255, 0.1);
       }
 
       .btn {
@@ -120,19 +187,47 @@
         border-radius: var(--radius);
         font-weight: 500;
         cursor: pointer;
-        transition: all 0.3s;
+        transition: all 0.3s ease;
         text-decoration: none;
         display: inline-block;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: left 0.5s ease;
+      }
+
+      .btn:hover::before {
+        left: 100%;
       }
 
       .btn-primary {
-        background-color: var(--primary);
+        background: linear-gradient(
+          90deg,
+          var(--gradient-start),
+          var(--gradient-end)
+        );
         color: white;
         border: none;
+        box-shadow: var(--shadow);
       }
 
       .btn-primary:hover {
-        background-color: var(--primary-dark);
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-lg);
       }
 
       .btn-outline {
@@ -144,6 +239,8 @@
       .btn-outline:hover {
         background-color: var(--primary);
         color: white;
+        transform: translateY(-3px);
+        box-shadow: var(--shadow);
       }
 
       /* Hero Section with Background Image */
@@ -170,12 +267,15 @@
           url("assets/smart-speaker-house-control-innovative-technology.jpg")
             no-repeat center center/cover;
         z-index: -1;
+        animation: zoomEffect 20s infinite alternate;
       }
 
       .hero-content {
         max-width: 800px;
         padding: 2rem;
-        animation: fadeIn 1s ease-out;
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeInUp 1s ease-out forwards;
       }
 
       .hero h1 {
@@ -204,35 +304,10 @@
         border-radius: var(--radius);
         font-weight: 500;
         cursor: pointer;
-        transition: all 0.3s;
+        transition: all 0.3s ease;
         text-decoration: none;
         display: inline-block;
         font-size: 1.1rem;
-      }
-
-      .btn-primary {
-        background-color: var(--primary);
-        color: white;
-        border: none;
-      }
-
-      .btn-primary:hover {
-        background-color: var(--primary-dark);
-        transform: translateY(-2px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-      }
-
-      .btn-outline {
-        background-color: transparent;
-        color: white;
-        border: 2px solid white;
-      }
-
-      .btn-outline:hover {
-        background-color: white;
-        color: var(--primary);
-        transform: translateY(-2px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
       }
 
       /* Scroll indicator */
@@ -244,17 +319,49 @@
         color: white;
         font-size: 2rem;
         animation: bounce 2s infinite;
+        cursor: pointer;
       }
 
       /* Animations */
       @keyframes fadeIn {
         from {
           opacity: 0;
-          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
         }
         to {
           opacity: 1;
           transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeInLeft {
+        from {
+          opacity: 0;
+          transform: translateX(-30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      @keyframes fadeInRight {
+        from {
+          opacity: 0;
+          transform: translateX(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
         }
       }
 
@@ -274,40 +381,50 @@
         }
       }
 
-      /* Responsive adjustments */
-      @media (max-width: 768px) {
-        .hero h1 {
-          font-size: 2.5rem;
+      @keyframes zoomEffect {
+        0% {
+          transform: scale(1);
         }
-
-        .hero p {
-          font-size: 1.1rem;
-        }
-
-        .hero-buttons {
-          flex-direction: column;
-          align-items: center;
-        }
-
-        .btn {
-          width: 100%;
-          max-width: 250px;
-          text-align: center;
+        100% {
+          transform: scale(1.1);
         }
       }
 
-      @media (max-width: 480px) {
-        .hero h1 {
-          font-size: 2rem;
+      @keyframes float {
+        0% {
+          transform: translateY(0px);
         }
-
-        .hero p {
-          font-size: 1rem;
+        50% {
+          transform: translateY(-10px);
+        }
+        100% {
+          transform: translateY(0px);
         }
       }
 
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      /* Section animations */
       section {
         padding: 5rem 0;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.6s ease, transform 0.6s ease;
+      }
+
+      section.visible {
+        opacity: 1;
+        transform: translateY(0);
       }
 
       .section-header {
@@ -319,6 +436,24 @@
         font-size: 2.5rem;
         font-weight: 700;
         margin-bottom: 1rem;
+        position: relative;
+        display: inline-block;
+      }
+
+      .section-header h2::after {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(
+          90deg,
+          var(--gradient-start),
+          var(--gradient-end)
+        );
+        border-radius: 3px;
       }
 
       .section-header p {
@@ -338,35 +473,97 @@
         border: 1px solid var(--border);
         border-radius: var(--radius);
         padding: 2rem;
-        transition: transform 0.3s, box-shadow 0.3s;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .feature-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 5px;
+        height: 0;
+        background: linear-gradient(
+          to bottom,
+          var(--gradient-start),
+          var(--gradient-end)
+        );
+        transition: height 0.3s ease;
       }
 
       .feature-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        transform: translateY(-10px);
+        box-shadow: var(--shadow-xl);
+      }
+
+      .feature-card:hover::before {
+        height: 100%;
       }
 
       .feature-icon {
-        background-color: var(--primary);
+        background: linear-gradient(
+          135deg,
+          var(--gradient-start),
+          var(--gradient-end)
+        );
         color: white;
-        width: 50px;
-        height: 50px;
+        width: 60px;
+        height: 60px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         margin-bottom: 1.5rem;
         font-size: 1.5rem;
+        transition: all 0.3s ease;
+      }
+
+      .feature-card:hover .feature-icon {
+        transform: scale(1.1) rotate(5deg);
       }
 
       .feature-card h3 {
         font-size: 1.5rem;
         margin-bottom: 1rem;
+        transition: color 0.3s ease;
+      }
+
+      .feature-card:hover h3 {
+        color: var(--primary);
       }
 
       .feature-card p {
         color: var(--muted);
+      }
+
+      /* Mobile UI Section */
+      .mobile-ui-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 2rem;
+        perspective: 1000px;
+      }
+
+      .mobile-ui-container .demo-video {
+        max-width: 300px;
+        width: 100%;
+        transition: all 0.5s ease;
+        transform-style: preserve-3d;
+      }
+
+      .mobile-ui-container img {
+        width: 100%;
+        border-radius: 30px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-xl);
+        transition: all 0.5s ease;
+      }
+
+      .mobile-ui-container .demo-video:hover {
+        transform: translateY(-10px) rotate3d(1, 0, 0, 10deg);
       }
 
       .pricing-cards {
@@ -382,31 +579,64 @@
         border-radius: var(--radius);
         padding: 2.5rem 2rem;
         text-align: center;
-        transition: transform 0.3s, box-shadow 0.3s;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .pricing-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: linear-gradient(
+          90deg,
+          var(--gradient-start),
+          var(--gradient-end)
+        );
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s ease;
       }
 
       .pricing-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        transform: translateY(-10px);
+        box-shadow: var(--shadow-xl);
+      }
+
+      .pricing-card:hover::before {
+        transform: scaleX(1);
       }
 
       .pricing-card.popular {
         border-color: var(--primary);
         position: relative;
         overflow: hidden;
+        transform: scale(1.05);
+        z-index: 1;
       }
 
       .pricing-card.popular::before {
+        transform: scaleX(1);
+      }
+
+      .pricing-card.popular::after {
         content: "Most Popular";
         position: absolute;
         top: 0;
         right: 0;
-        background-color: var(--primary);
+        background: linear-gradient(
+          90deg,
+          var(--gradient-start),
+          var(--gradient-end)
+        );
         color: white;
         padding: 0.5rem 1rem;
         font-size: 0.875rem;
         font-weight: 500;
+        animation: pulse 2s infinite;
       }
 
       .pricing-card h3 {
@@ -419,12 +649,16 @@
         font-weight: 700;
         margin-bottom: 1.5rem;
         color: var(--foreground);
+        display: flex;
+        justify-content: center;
+        align-items: baseline;
       }
 
       .price span {
         font-size: 1rem;
         color: var(--muted);
         font-weight: 400;
+        margin-left: 0.5rem;
       }
 
       .pricing-features {
@@ -436,6 +670,12 @@
         padding: 0.5rem 0;
         color: var(--muted);
         border-bottom: 1px solid var(--border);
+        transition: all 0.3s ease;
+      }
+
+      .pricing-features li:hover {
+        color: var(--primary);
+        transform: translateX(5px);
       }
 
       .pricing-features li:last-child {
@@ -452,6 +692,12 @@
         border: 1px solid var(--border);
         border-radius: var(--radius);
         overflow: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .faq-item:hover {
+        border-color: var(--primary);
+        box-shadow: var(--shadow);
       }
 
       .faq-question {
@@ -462,13 +708,22 @@
         justify-content: space-between;
         align-items: center;
         font-weight: 600;
+        transition: all 0.3s ease;
+      }
+
+      .faq-question:hover {
+        background-color: rgba(37, 99, 235, 0.05);
+      }
+
+      .dark .faq-question:hover {
+        background-color: rgba(37, 99, 235, 0.1);
       }
 
       .faq-answer {
         padding: 0 1.5rem;
         max-height: 0;
         overflow: hidden;
-        transition: max-height 0.3s, padding 0.3s;
+        transition: max-height 0.5s ease, padding 0.3s ease;
         background-color: var(--card);
       }
 
@@ -497,9 +752,14 @@
       .demo-video {
         border-radius: var(--radius);
         overflow: hidden;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
-          0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        box-shadow: var(--shadow-xl);
         border: 1px solid var(--border);
+        transition: all 0.3s ease;
+        transform: perspective(1000px) rotateY(0deg);
+      }
+
+      .demo-video:hover {
+        transform: perspective(1000px) rotateY(5deg);
       }
 
       .demo-video video {
@@ -511,6 +771,24 @@
         text-align: center;
         padding: 5rem 0;
         background: linear-gradient(to bottom, var(--card), var(--background));
+        position: relative;
+        overflow: hidden;
+      }
+
+      .cta::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          45deg,
+          var(--gradient-start) 0%,
+          transparent 70%
+        );
+        opacity: 0.05;
+        z-index: -1;
       }
 
       .cta h2 {
@@ -539,6 +817,22 @@
       .footer-column h3 {
         font-size: 1.2rem;
         margin-bottom: 1.5rem;
+        position: relative;
+        display: inline-block;
+      }
+
+      .footer-column h3::after {
+        content: "";
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 30px;
+        height: 2px;
+        background: linear-gradient(
+          90deg,
+          var(--gradient-start),
+          var(--gradient-end)
+        );
       }
 
       .footer-column ul {
@@ -547,16 +841,23 @@
 
       .footer-column ul li {
         margin-bottom: 0.75rem;
+        transition: transform 0.3s ease;
+      }
+
+      .footer-column ul li:hover {
+        transform: translateX(5px);
       }
 
       .footer-column a {
         color: var(--muted);
         text-decoration: none;
-        transition: color 0.3s;
+        transition: all 0.3s ease;
+        display: inline-block;
       }
 
       .footer-column a:hover {
         color: var(--primary);
+        transform: translateX(5px);
       }
 
       .footer-bottom {
@@ -567,14 +868,25 @@
         border-top: 1px solid var(--border);
       }
 
+      /* Responsive adjustments */
       @media (max-width: 768px) {
         .hero h1 {
           font-size: 2.5rem;
         }
 
+        .hero p {
+          font-size: 1.1rem;
+        }
+
         .hero-buttons {
           flex-direction: column;
           align-items: center;
+        }
+
+        .btn {
+          width: 100%;
+          max-width: 250px;
+          text-align: center;
         }
 
         .demo-container {
@@ -584,16 +896,279 @@
         .nav-links {
           display: none;
         }
+
+        .mobile-ui-container .demo-video {
+          max-width: 250px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .hero h1 {
+          font-size: 2rem;
+        }
+
+        .hero p {
+          font-size: 1rem;
+        }
+
+        .section-header h2 {
+          font-size: 2rem;
+        }
+
+        .pricing-card.popular {
+          transform: scale(1);
+        }
+      }
+
+      /* Contact Section Styles */
+      #contact {
+        padding: 5rem 0;
+        background: linear-gradient(to bottom, var(--card), var(--background));
+      }
+
+      .contact-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        margin-top: 3rem;
+      }
+
+      .contact-info {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+
+      .info-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1.5rem;
+        background-color: var(--card);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        transition: all 0.3s ease;
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+
+      .info-item.visible {
+        opacity: 1;
+        transform: translateX(0);
+      }
+
+      .info-item:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .info-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(
+          135deg,
+          var(--gradient-start),
+          var(--gradient-end)
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+      }
+
+      .info-content h3 {
+        margin-bottom: 0.5rem;
+        color: var(--foreground);
+      }
+
+      .info-content p {
+        color: var(--muted);
+        margin: 0;
+        line-height: 1.5;
+      }
+
+      .contact-form {
+        background-color: var(--card);
+        padding: 2.5rem;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-xl);
+        opacity: 0;
+        transform: translateX(20px);
+        transition: all 0.5s ease;
+      }
+
+      .contact-form.visible {
+        opacity: 1;
+        transform: translateX(0);
+      }
+
+      .form-group {
+        position: relative;
+        margin-bottom: 2rem;
+      }
+
+      .form-group input,
+      .form-group textarea {
+        width: 100%;
+        padding: 0.8rem 0;
+        font-size: 1rem;
+        background-color: transparent;
+        border: none;
+        border-bottom: 1px solid var(--muted-foreground);
+        color: var(--foreground);
+        outline: none;
+        transition: all 0.3s ease;
+      }
+
+      .form-group label {
+        position: absolute;
+        top: 0.8rem;
+        left: 0;
+        font-size: 1rem;
+        color: var(--muted-foreground);
+        pointer-events: none;
+        transition: all 0.3s ease;
+      }
+
+      .form-group .underline {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: linear-gradient(
+          90deg,
+          var(--gradient-start),
+          var(--gradient-end)
+        );
+        transition: width 0.3s ease;
+      }
+
+      .form-group input:focus,
+      .form-group textarea:focus {
+        border-bottom: 1px solid transparent;
+      }
+
+      .form-group input:focus + label,
+      .form-group textarea:focus + label,
+      .form-group input:valid + label,
+      .form-group textarea:valid + label {
+        top: -1.2rem;
+        font-size: 0.8rem;
+        color: var(--primary);
+      }
+
+      .form-group input:focus ~ .underline,
+      .form-group textarea:focus ~ .underline {
+        width: 100%;
+      }
+
+      .contact-form button {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.8rem 1.8rem;
+        border: none;
+        border-radius: var(--radius);
+        background: linear-gradient(
+          90deg,
+          var(--gradient-start),
+          var(--gradient-end)
+        );
+        color: white;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .contact-form button i {
+        transition: transform 0.3s ease;
+      }
+
+      .contact-form button:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .contact-form button:hover i {
+        transform: translateX(5px);
+      }
+
+      .contact-form button::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: left 0.5s ease;
+      }
+
+      .contact-form button:hover::before {
+        left: 100%;
+      }
+
+      /* Success message */
+      #contactForm .success-message {
+        margin-top: 1rem;
+        padding: 1rem;
+        background-color: rgba(46, 204, 113, 0.1);
+        border-left: 4px solid #2ecc71;
+        color: #2ecc71;
+        border-radius: 4px;
+        display: none;
+      }
+
+      /* Responsive design */
+      @media (max-width: 968px) {
+        .contact-container {
+          grid-template-columns: 1fr;
+          gap: 2rem;
+        }
+
+        .contact-info {
+          order: 2;
+        }
+
+        .contact-form {
+          order: 1;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .contact-form {
+          padding: 1.5rem;
+        }
+
+        .info-item {
+          flex-direction: column;
+          text-align: center;
+        }
+
+        .info-icon {
+          align-self: center;
+        }
       }
     </style>
   </head>
   <body>
-    <header>
+    <header id="main-header">
       <div class="container">
         <nav>
           <div class="logo">
             <i class="fas fa-home"></i>
-            <span>SmartHome Hub</span>
+            <span>SmartHome</span>
           </div>
           <div class="nav-links">
             <a href="#features">Features</a>
@@ -625,18 +1200,10 @@
           <a href="#demo" class="btn btn-outline">View Demo</a>
         </div>
       </div>
-      <div class="scroll-indicator">
+      <a href="#features" class="scroll-indicator">
         <i class="fas fa-chevron-down"></i>
-      </div>
+      </a>
     </section>
-
-    <script>
-      // Simple fade-in animation for content
-      document.addEventListener("DOMContentLoaded", function () {
-        const heroContent = document.querySelector(".hero-content");
-        heroContent.style.opacity = 1;
-      });
-    </script>
 
     <section id="features">
       <div class="container">
@@ -713,54 +1280,21 @@
     </section>
 
     <section id="mobile-ui">
-  <div class="container">
-    <div class="section-header">
-      <h2>Control Your Home on the Go</h2>
-      <p>
-        Our mobile app lets you manage your smart home from anywhere,
-        providing full control at your fingertips.
-      </p>
-    </div>
-    <div class="mobile-ui-container">
-      <div class="demo-video">
-        <img
-          src="assets/iOS Smart Home App.png"
-          alt="Smart Home App UI"
-        />
+      <div class="container">
+        <div class="section-header">
+          <h2>Control Your Home on the Go</h2>
+          <p>
+            Our mobile app lets you manage your smart home from anywhere,
+            providing full control at your fingertips.
+          </p>
+        </div>
+        <div class="mobile-ui-container">
+          <div class="demo-video">
+            <img src="assets/iOS Smart Home App.png" alt="Smart Home App UI" />
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</section>
-
-<style>
-  /* Center the phone UI section */
-  .mobile-ui-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 2rem;
-  }
-
-  .mobile-ui-container .demo-video {
-    max-width: 600px; /* Make it bigger */
-    width: 100%;
-  }
-
-  .mobile-ui-container img {
-    width: 100%;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-  }
-
-  /* Optional: smaller on mobile */
-  @media (max-width: 768px) {
-    .mobile-ui-container .demo-video {
-      max-width: 90%;
-    }
-  }
-</style>
-
+    </section>
 
     <section id="pricing">
       <div class="container">
@@ -934,46 +1468,137 @@
       </div>
     </section>
 
-    <footer>
+    <!-- Add this section where you want the contact form to appear in your HTML -->
+    <section id="contact">
       <div class="container">
-        <div class="footer-content">
-          <div class="footer-column">
-            <h3>SmartHome Hub</h3>
-            <p>Making home automation accessible and intuitive for everyone.</p>
-          </div>
-          <div class="footer-column">
-            <h3>Product</h3>
-            <ul>
-              <li><a href="#">Features</a></li>
-              <li><a href="#">Pricing</a></li>
-              <li><a href="#">Demo</a></li>
-              <li><a href="#">Integrations</a></li>
-            </ul>
-          </div>
-          <div class="footer-column">
-            <h3>Resources</h3>
-            <ul>
-              <li><a href="#">Documentation</a></li>
-              <li><a href="#">Blog</a></li>
-              <li><a href="#">Support</a></li>
-              <li><a href="#">Community</a></li>
-            </ul>
-          </div>
-          <div class="footer-column">
-            <h3>Company</h3>
-            <ul>
-              <li><a href="#">About Us</a></li>
-              <li><a href="#">Careers</a></li>
-              <li><a href="#">Contact</a></li>
-              <li><a href="#">Partners</a></li>
-            </ul>
-          </div>
+        <div class="section-header">
+          <h2>Get In Touch</h2>
+          <p>
+            Have questions or need support? Our team is here to help you with
+            your smart home journey.
+          </p>
         </div>
-        <div class="footer-bottom">
-          <p>&copy; 2025 SmartHome Hub. All rights reserved.</p>
+        <div class="contact-container">
+          <div class="contact-info">
+            <div class="info-item">
+              <div class="info-icon">
+                <i class="fas fa-map-marker-alt"></i>
+              </div>
+              <div class="info-content">
+                <h3>Visit Us</h3>
+                <p>123 Smart Street, Tech City, TC 12345</p>
+              </div>
+            </div>
+            <div class="info-item">
+              <div class="info-icon">
+                <i class="fas fa-phone"></i>
+              </div>
+              <div class="info-content">
+                <h3>Call Us</h3>
+                <p>+1 (555) 123-4567</p>
+              </div>
+            </div>
+            <div class="info-item">
+              <div class="info-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="info-content">
+                <h3>Email Us</h3>
+                <p>support@smarthomehub.com</p>
+              </div>
+            </div>
+            <div class="info-item">
+              <div class="info-icon">
+                <i class="fas fa-clock"></i>
+              </div>
+              <div class="info-content">
+                <h3>Business Hours</h3>
+                <p>Monday - Friday: 9AM - 6PM</p>
+                <p>Saturday: 10AM - 4PM</p>
+              </div>
+            </div>
+          </div>
+          <div class="contact-form">
+            <form id="contactForm">
+              <div class="form-group">
+                <input type="text" id="name" name="name" required />
+                <label for="name">Your Name</label>
+                <div class="underline"></div>
+              </div>
+              <div class="form-group">
+                <input type="email" id="email" name="email" required />
+                <label for="email">Your Email</label>
+                <div class="underline"></div>
+              </div>
+              <div class="form-group">
+                <input type="text" id="subject" name="subject" required />
+                <label for="subject">Subject</label>
+                <div class="underline"></div>
+              </div>
+              <div class="form-group">
+                <textarea
+                  id="message"
+                  name="message"
+                  rows="5"
+                  required
+                ></textarea>
+                <label for="message">Your Message</label>
+                <div class="underline"></div>
+              </div>
+              <button type="submit" class="btn btn-primary">
+                <span>Send Message</span>
+                <i class="fas fa-paper-plane"></i>
+              </button>
+            </form>
+          </div>
         </div>
       </div>
-    </footer>
+    </section>
+
+    <footer style="position: relative; background-image: url('assets/96317\ \(1\).jpg'); background-size: cover; background-position: center; color: white;">
+  <!-- Overlay -->
+  <div style="position: absolute; inset: 0; background-color: rgba(0,0,0,0.6);"></div>
+
+  <div class="container" style="position: relative; z-index: 1;">
+    <div class="footer-content">
+      <div class="footer-column">
+        <h3>SmartHome</h3>
+        <p>Making home automation accessible and intuitive for everyone.</p>
+      </div>
+      <div class="footer-column">
+        <h3>Product</h3>
+        <ul>
+          <li><a href="#">Features</a></li>
+          <li><a href="#">Pricing</a></li>
+          <li><a href="#">Demo</a></li>
+          <li><a href="#">Integrations</a></li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h3>Resources</h3>
+        <ul>
+          <li><a href="#">Documentation</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Support</a></li>
+          <li><a href="#">Community</a></li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h3>Company</h3>
+        <ul>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Contact</a></li>
+          <li><a href="#">Partners</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 SmartHome Hub. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
 
     <script>
       // Theme toggle functionality
@@ -1026,6 +1651,124 @@
           }
         });
       });
+
+      // Header scroll effect
+      const header = document.getElementById("main-header");
+      window.addEventListener("scroll", () => {
+        if (window.scrollY > 50) {
+          header.classList.add("scrolled");
+        } else {
+          header.classList.remove("scrolled");
+        }
+      });
+
+      // Contact Form JavaScript
+      document.addEventListener("DOMContentLoaded", function () {
+        const contactSection = document.getElementById("contact");
+        const contactForm = document.getElementById("contactForm");
+        const formGroups = document.querySelectorAll(".form-group");
+        const infoItems = document.querySelectorAll(".info-item");
+        const contactFormContainer = document.querySelector(".contact-form");
+
+        // Animate form elements on scroll
+        function animateOnScroll() {
+          const sectionTop = contactSection.getBoundingClientRect().top;
+          const triggerHeight = window.innerHeight * 0.8;
+
+          if (sectionTop < triggerHeight) {
+            contactFormContainer.classList.add("visible");
+
+            infoItems.forEach((item, index) => {
+              setTimeout(() => {
+                item.classList.add("visible");
+              }, index * 150);
+            });
+
+            formGroups.forEach((group, index) => {
+              setTimeout(() => {
+                group.style.opacity = 1;
+                group.style.transform = "translateY(0)";
+              }, index * 100);
+            });
+
+            // Remove scroll event listener after animation
+            window.removeEventListener("scroll", animateOnScroll);
+          }
+        }
+
+        // Initial check and add scroll listener
+        animateOnScroll();
+        window.addEventListener("scroll", animateOnScroll);
+
+        // Form validation and submission
+        contactForm.addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          // Basic validation
+          let isValid = true;
+          const inputs = contactForm.querySelectorAll("input, textarea");
+
+          inputs.forEach((input) => {
+            if (!input.value.trim()) {
+              isValid = false;
+              input.style.borderBottomColor = "#e74c3c";
+            } else {
+              input.style.borderBottomColor = "";
+            }
+          });
+
+          if (isValid) {
+            // Here you would typically send the form data to a server
+            // For demonstration, we'll show a success message
+            const submitButton = contactForm.querySelector("button");
+            submitButton.innerHTML =
+              '<i class="fas fa-check"></i> Message Sent!';
+            submitButton.style.background = "#2ecc71";
+
+            // Reset form after 2 seconds
+            setTimeout(() => {
+              contactForm.reset();
+              submitButton.innerHTML =
+                '<span>Send Message</span> <i class="fas fa-paper-plane"></i>';
+              submitButton.style.background = "";
+            }, 2000);
+          }
+        });
+
+        // Add input animation on focus
+        const formInputs = contactForm.querySelectorAll("input, textarea");
+        formInputs.forEach((input) => {
+          input.addEventListener("focus", function () {
+            this.parentElement.classList.add("focused");
+          });
+
+          input.addEventListener("blur", function () {
+            if (!this.value) {
+              this.parentElement.classList.remove("focused");
+            }
+          });
+        });
+      });
+
+      // Scroll animation for sections
+      const sections = document.querySelectorAll("section");
+
+      function checkScroll() {
+        sections.forEach((section) => {
+          const sectionTop = section.getBoundingClientRect().top;
+          const triggerHeight = window.innerHeight * 0.8;
+
+          if (sectionTop < triggerHeight) {
+            section.classList.add("visible");
+          }
+        });
+      }
+
+      // Initial check
+      checkScroll();
+
+      // Check on scroll
+      window.addEventListener("scroll", checkScroll);
     </script>
   </body>
 </html>
